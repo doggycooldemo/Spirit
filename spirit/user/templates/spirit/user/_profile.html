@@ -1,9 +1,10 @@
 {% load spirit_tags i18n %}
 
 <div class="profile__img">
-  <img
-    class="profile__img__avatar"
-    src="{% get_gravatar_url user=p_user size=200 %}" />
+  <div
+    class="profile__img__avatar no-pic"
+    style="background-color:{% get_avatar_color p_user.pk %};"
+  >{{ p_user.st.nickname.0.upper }}</div>
   <div class="profile__img__username">{{ p_user.st.nickname }}</div>
 </div>
 

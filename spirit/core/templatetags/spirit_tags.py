@@ -7,7 +7,6 @@ from ...topic.favorite import tags as topic_favorite
 from ...topic.notification import tags as topic_notification
 from ...topic.private import tags as topic_private
 from ..tags import avatar
-from ..tags import gravatar
 from ..tags import messages
 from ..tags import paginator
 from ..tags import settings
@@ -25,7 +24,6 @@ __all__ = [
     'topic_notification',
     'topic_private',
     'avatar',
-    'gravatar',
     'messages',
     'paginator',
     'settings',

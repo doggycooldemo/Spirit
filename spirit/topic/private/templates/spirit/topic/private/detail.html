@@ -71,10 +71,10 @@
 
     <div id="reply" class="comments__reply">
       <div class="comments__reply__img">
-        <img
-          alt=""
-          class="comment__img__avatar"
-          src="{% get_gravatar_url user=user size=50 %}" />
+        <div
+          class="comment__img__avatar no-pic"
+          style="background-color:{% get_avatar_color user.pk %};"
+        >{{ user.st.nickname.0.upper }}</div>
       </div>
       <div class="comment__reply__info">
         <a

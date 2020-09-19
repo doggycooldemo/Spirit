@@ -4,10 +4,10 @@
   {% for c in comments %}
     <div class="comments_list__comment no-footer">
       <div class="comment__img">
-        <img
-          alt=""
-          class="comment__img__avatar"
-          src="{% get_gravatar_url user=c.user size=50 %}" />
+        <div
+          class="comment__img__avatar no-pic"
+          style="background-color:{% get_avatar_color c.user.pk %};"
+        >{{ c.user.st.nickname.0.upper }}</div>
       </div>
       <div class="comment__info">
         <div class="comment__info__username">
