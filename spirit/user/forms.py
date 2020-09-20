@@ -85,11 +85,12 @@ class UserProfileForm(forms.ModelForm):
         widgets = {'avatar': ImageWidget}
 
     def __init__(self, *args, **kwargs):
-        super(UserProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         now = timezone.localtime(timezone.now())
         self.fields['timezone'].help_text = _('Current time is: %(date)s %(time)s') % {
             'date': defaultfilters.date(now),
             'time': defaultfilters.time(now)}
+        self.fields['avatar'].widget.clear_checkbox_label = _('Remove avatar')
         self.fields['avatar'].widget.attrs['accept'] = (
             ", ".join(
                 '.%s' % ext
@@ -97,8 +98,11 @@ class UserProfileForm(forms.ModelForm):
 
     def clean_avatar(self):
         file = self.cleaned_data['avatar']
-        ext = os.path.splitext(file.name)[1].lstrip('.').lower()
+        # can be bool (clear) or not an image (empty)
+        if not hasattr(file, 'image'):
+            return file
 
+        ext = os.path.splitext(file.name)[1].lstrip('.').lower()
         if (ext not in settings.ST_ALLOWED_AVATAR_FORMAT or
                 file.image.format.lower() not in settings.ST_ALLOWED_AVATAR_FORMAT):
             raise forms.ValidationError(
@@ -106,3 +110,12 @@ class UserProfileForm(forms.ModelForm):
                 ", ".join(settings.ST_ALLOWED_AVATAR_FORMAT))
 
         return file
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.instance.pk is not None:
+            if self.instance.avatar != cleaned_data['avatar']:
+                # XXX maybe add setting.AVATAR_STORAGE
+                #     to support overwrite and prevent race conditions
+                self.instance.avatar.delete()
+        return cleaned_data

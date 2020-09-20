@@ -1021,6 +1021,14 @@ del.diff {
     margin: 0 auto;
   }
 }
+.profile__form {
+  display: flex;
+  flex-direction: column;
+  // avatar
+  .field:nth-child(3) {
+    order: -1;
+  }
+}
 // Profile_end
 // Profile_settings_start
 .profile__settings {

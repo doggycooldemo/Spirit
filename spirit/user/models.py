@@ -58,7 +58,7 @@ class UserProfile(models.Model):
         if self.is_administrator:
             self.is_moderator = True
 
-        super(UserProfile, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse(
