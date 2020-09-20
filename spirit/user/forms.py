@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.template import defaultfilters
 
-from ..core.conf import settings
-from ..core.utils.timezone import timezones
+from spirit.core.conf import settings
+from spirit.core.utils.timezone import timezones
 from .models import UserProfile
 
 User = get_user_model()
@@ -75,7 +77,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ("location", "timezone")
+        fields = ("avatar", "location", "timezone")
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
@@ -83,3 +85,19 @@ class UserProfileForm(forms.ModelForm):
         self.fields['timezone'].help_text = _('Current time is: %(date)s %(time)s') % {
             'date': defaultfilters.date(now),
             'time': defaultfilters.time(now)}
+        self.fields['avatar'].widget.attrs['accept'] = (
+            ", ".join(
+                '.%s' % ext
+                for ext in sorted(settings.ST_ALLOWED_AVATAR_FORMAT)))
+
+    def clean_avatar(self):
+        file = self.cleaned_data['avatar']
+        ext = os.path.splitext(file.name)[1].lstrip('.').lower()
+
+        if (ext not in settings.ST_ALLOWED_AVATAR_FORMAT or
+                file.image.format.lower() not in settings.ST_ALLOWED_AVATAR_FORMAT):
+            raise forms.ValidationError(
+                _("Unsupported file format. Supported formats are %s.") %
+                ", ".join(settings.ST_ALLOWED_AVATAR_FORMAT))
+
+        return file

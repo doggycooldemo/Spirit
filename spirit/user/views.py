@@ -11,7 +11,7 @@ from django.http import HttpResponsePermanentRedirect
 
 from djconfig import config
 
-from ..core.utils.views import is_post, post_data
+from ..core.utils.views import is_post, post_data, post_files
 from ..core.utils.paginator import yt_paginate
 from .utils.email import send_email_change_email
 from .utils.tokens import UserEmailChangeTokenGenerator
@@ -29,6 +29,7 @@ def update(request):
         instance=request.user)
     form = UserProfileForm(
         data=post_data(request),
+        files=post_files(request),
         instance=request.user.st)
     if is_post(request) and all([uform.is_valid(), form.is_valid()]):  # TODO: test!
         uform.save()

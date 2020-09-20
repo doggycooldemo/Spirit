@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import hashlib
 
 from django.db import transaction
 from django.core.mail import send_mail
 from django.apps import apps
 from django.core.management import call_command
+from django.contrib.auth import get_user_model
+
+import requests
 
 from .conf import settings
 from . import signals

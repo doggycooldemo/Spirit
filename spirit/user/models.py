@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from datetime import timedelta
 
 from django.db import models
@@ -7,8 +8,14 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
-from ..core.conf import settings
-from ..core.utils.models import AutoSlugField
+from spirit.core.conf import settings
+from spirit.core.utils.models import AutoSlugField
+
+
+def avatar_path(instance, filename):
+    ext = os.path.splitext(filename)[1].lower()
+    return 'spirit/avatars/{}/raw{}'.format(
+        instance.user_id, ext)
 
 
 class UserProfile(models.Model):
@@ -24,6 +31,7 @@ class UserProfile(models.Model):
     last_seen = models.DateTimeField(_("last seen"), auto_now=True)
     last_ip = models.GenericIPAddressField(_("last ip"), blank=True, null=True)
     timezone = models.CharField(_("time zone"), max_length=32, default='UTC')
+    avatar = models.ImageField(upload_to=avatar_path, max_length=255, blank=True)
     is_administrator = models.BooleanField(_('administrator status'), default=False)
     is_moderator = models.BooleanField(_('moderator status'), default=False)
     is_verified = models.BooleanField(

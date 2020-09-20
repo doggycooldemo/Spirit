@@ -1,10 +1,17 @@
 {% load spirit_tags i18n %}
 
 <div class="profile__img">
-  <div
-    class="profile__img__avatar no-pic"
-    style="background-color:{% get_avatar_color p_user.pk %};"
-  >{{ p_user.st.nickname.0.upper }}</div>
+  {% if p_user.st.avatar %}
+    <img
+      class="profile__img__avatar"
+      alt=""
+      src="{{ p_user.st.avatar.url }}"/>
+  {% else %}
+    <div
+      class="profile__img__avatar no-pic"
+      style="background-color:{% get_avatar_color p_user.pk %};"
+    >{{ p_user.st.nickname.0.upper }}</div>
+  {% endif %}
   <div class="profile__img__username">{{ p_user.st.nickname }}</div>
 </div>
 

@@ -70,6 +70,15 @@ ST_SEARCH_QUERY_MIN_LEN = 3
 #: `"last seen"` info can be updated
 ST_USER_LAST_SEEN_THRESHOLD_MINUTES = 1
 
+#: The user avatar will be validated against these formats.
+#: See the `Pillow docs <http://pillow.readthedocs.io/en/latest/handbook/image-file-formats.html>`_
+#: for a list of supported formats
+#:
+#: .. Warning::
+#:     Allowing PNG files is a security risk as it may contain malicious HTML.
+#:     See `Django notes <https://docs.djangoproject.com/en/1.11/topics/security/#user-uploaded-content>`_
+ST_ALLOWED_AVATAR_FORMAT = ('jpeg', 'jpg')
+
 #: Settings this to ``True`` will require
 #: all users to be logged-in to access any section
 ST_PRIVATE_FORUM = False
