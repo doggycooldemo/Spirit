@@ -300,6 +300,24 @@
   font-size: rem(12px);
   background-color: var(--st-bg-unread);
 }
+.image_widget {
+  img {
+    width: 100px;
+  }
+}
+  .image_widget__clear {
+    display: flex;
+    align-items: center;
+    margin: $space-half 0;
+    input,
+    label {
+      padding: 0;
+      margin: 0;
+    }
+    label {
+      padding-left: $space-half;
+    }
+  }
 // Base_end
 // Topics_start
 .layout__menu {

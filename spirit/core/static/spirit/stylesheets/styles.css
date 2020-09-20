@@ -4875,6 +4875,18 @@ html input[disabled] {
   .spirit .unread {
     font-size: 0.75rem;
     background-color: var(--st-bg-unread); }
+  .spirit .image_widget img {
+    width: 100px; }
+  .spirit .image_widget__clear {
+    display: flex;
+    align-items: center;
+    margin: 12px 0; }
+    .spirit .image_widget__clear input,
+    .spirit .image_widget__clear label {
+      padding: 0;
+      margin: 0; }
+    .spirit .image_widget__clear label {
+      padding-left: 12px; }
   @media screen and (min-width: 768px) {
     .spirit .menu__new_topic {
       flex: none;

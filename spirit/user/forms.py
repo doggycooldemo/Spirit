@@ -71,6 +71,10 @@ class UserForm(forms.ModelForm):
         fields = ("first_name", "last_name")
 
 
+class ImageWidget(forms.ClearableFileInput):
+    template_name = 'spirit/user/_image_widget.html'
+
+
 class UserProfileForm(forms.ModelForm):
 
     timezone = forms.ChoiceField(label=_("Time zone"), choices=TIMEZONE_CHOICES)
@@ -78,6 +82,7 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ("avatar", "location", "timezone")
+        widgets = {'avatar': ImageWidget}
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
