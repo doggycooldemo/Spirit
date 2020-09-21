@@ -31,7 +31,8 @@ class UserProfile(models.Model):
     last_seen = models.DateTimeField(_("last seen"), auto_now=True)
     last_ip = models.GenericIPAddressField(_("last ip"), blank=True, null=True)
     timezone = models.CharField(_("time zone"), max_length=32, default='UTC')
-    avatar = models.ImageField(_("avatar"), upload_to=avatar_path, max_length=255, blank=True)
+    avatar = models.ImageField(
+        _("avatar"), upload_to=avatar_path, max_length=255, blank=True)
     is_administrator = models.BooleanField(_('administrator status'), default=False)
     is_moderator = models.BooleanField(_('moderator status'), default=False)
     is_verified = models.BooleanField(

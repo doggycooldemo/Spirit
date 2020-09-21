@@ -97,6 +97,11 @@ def full_search_index_update():
 
 
 @delayed_task
+def make_avatars(user_id):
+    pass
+
+
+@delayed_task
 def clean_sessions():
     pass
 

@@ -11,12 +11,12 @@ from django.http import HttpResponsePermanentRedirect
 
 from djconfig import config
 
-from ..core.utils.views import is_post, post_data, post_files
-from ..core.utils.paginator import yt_paginate
+from spirit.core.utils.views import is_post, post_data, post_files
+from spirit.core.utils.paginator import yt_paginate
 from .utils.email import send_email_change_email
 from .utils.tokens import UserEmailChangeTokenGenerator
-from ..topic.models import Topic
-from ..comment.models import Comment
+from spirit.topic.models import Topic
+from spirit.comment.models import Comment
 from .forms import UserProfileForm, EmailChangeForm, UserForm, EmailCheckForm
 
 User = get_user_model()
@@ -109,7 +109,6 @@ def _activity(request, pk, slug, queryset, template, reverse_to, context_name, p
         request=request,
         template_name=template,
         context={'p_user': p_user, context_name: items})
-
 
 
 def topics(request, pk, slug):

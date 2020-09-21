@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.template import defaultfilters
 
+from spirit.core import tasks
 from spirit.core.conf import settings
 from spirit.core.utils.timezone import timezones
 from .models import UserProfile
@@ -95,6 +96,7 @@ class UserProfileForm(forms.ModelForm):
             ", ".join(
                 '.%s' % ext
                 for ext in sorted(settings.ST_ALLOWED_AVATAR_FORMAT)))
+        self._old_avatar = self.instance.avatar
 
     def clean_avatar(self):
         file = self.cleaned_data['avatar']
@@ -113,9 +115,9 @@ class UserProfileForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        if self.instance.pk is not None:
-            if self.instance.avatar != cleaned_data['avatar']:
-                # XXX maybe add setting.AVATAR_STORAGE
-                #     to support overwrite and prevent race conditions
-                self.instance.avatar.delete()
+        if self.instance.avatar != cleaned_data['avatar']:
+            # XXX maybe add setting.AVATAR_STORAGE
+            #     to support overwrite and prevent race conditions
+            self.instance.avatar.delete()
+            tasks.make_avatars(self.instance.user_id)
         return cleaned_data
