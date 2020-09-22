@@ -72,8 +72,12 @@ class UserForm(forms.ModelForm):
         fields = ("first_name", "last_name")
 
 
-class ImageWidget(forms.ClearableFileInput):
+class AvatarWidget(forms.ClearableFileInput):
     template_name = 'spirit/user/_image_widget.html'
+    clear_checkbox_label = _('Remove avatar')
+    accept = ', '.join(
+        '.%s' % ext
+        for ext in sorted(settings.ST_ALLOWED_AVATAR_FORMAT))
 
 
 class UserProfileForm(forms.ModelForm):
@@ -83,7 +87,7 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ("avatar", "location", "timezone")
-        widgets = {'avatar': ImageWidget}
+        widgets = {'avatar': AvatarWidget(attrs={'accept': AvatarWidget.accept})}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -91,12 +95,6 @@ class UserProfileForm(forms.ModelForm):
         self.fields['timezone'].help_text = _('Current time is: %(date)s %(time)s') % {
             'date': defaultfilters.date(now),
             'time': defaultfilters.time(now)}
-        self.fields['avatar'].widget.clear_checkbox_label = _('Remove avatar')
-        self.fields['avatar'].widget.attrs['accept'] = (
-            ", ".join(
-                '.%s' % ext
-                for ext in sorted(settings.ST_ALLOWED_AVATAR_FORMAT)))
-        self._old_avatar = self.instance.avatar
 
     def clean_avatar(self):
         file = self.cleaned_data['avatar']
@@ -113,11 +111,8 @@ class UserProfileForm(forms.ModelForm):
 
         return file
 
-    def clean(self):
-        cleaned_data = super().clean()
-        if self.instance.avatar != cleaned_data['avatar']:
-            # XXX maybe add setting.AVATAR_STORAGE
-            #     to support overwrite and prevent race conditions
-            self.instance.avatar.delete()
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+        if 'avatar' in self.changed_data:
             tasks.make_avatars(self.instance.user_id)
-        return cleaned_data
+        return instance

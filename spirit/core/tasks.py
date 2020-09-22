@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import hashlib
 
 from django.db import transaction
 from django.core.mail import send_mail
@@ -9,7 +8,7 @@ from django.apps import apps
 from django.core.management import call_command
 from django.contrib.auth import get_user_model
 
-import requests
+from PIL import Image
 
 from .conf import settings
 from . import signals
@@ -98,7 +97,25 @@ def full_search_index_update():
 
 @delayed_task
 def make_avatars(user_id):
-    pass
+    def crop_max_square(image):
+        w, h = image.size
+        wh = min(w, h)
+        x = max(0, (w - wh) // 2 - 1)
+        y = max(0, (h - wh) // 2 - 1)
+        return image.crop((x, y, x+wh, y+wh))
+    User = get_user_model()
+    user = User.objects.get(pk=user_id)
+    avatar_name = user.st.avatar.name or ''
+    if avatar_name == '_raw_done':
+        return
+    user.st.avatar.open()
+    image = Image.open(user.st.avatar)
+    image = crop_max_square(image)
+    image.resize((100, 100), resample=Image.BICUBIC)
+    #from django.core.files.uploadedfile import SimpleUploadedFile
+
+    user.st.avatar.name = '_raw_done'
+    user.st.save()
 
 
 @delayed_task
