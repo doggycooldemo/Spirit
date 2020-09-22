@@ -14,8 +14,8 @@ from spirit.core.utils.models import AutoSlugField
 
 def avatar_path(instance, filename):
     ext = os.path.splitext(filename)[1].lower()
-    return 'spirit/avatars/{}/raw{}'.format(
-        instance.user_id, ext)
+    return os.path.join(
+        'spirit', 'avatars', str(instance.user_id), 'pic' + ext)
 
 
 class UserProfile(models.Model):

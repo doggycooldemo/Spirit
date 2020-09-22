@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import io
+import os
 
 from django.db import transaction
 from django.core.mail import send_mail
 from django.apps import apps
 from django.core.management import call_command
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.storage import default_storage
 
 from PIL import Image
 
@@ -100,22 +104,37 @@ def make_avatars(user_id):
     def crop_max_square(image):
         w, h = image.size
         wh = min(w, h)
-        x = max(0, (w - wh) // 2 - 1)
-        y = max(0, (h - wh) // 2 - 1)
+        x = max(0, (w - wh) // 2)
+        y = max(0, (h - wh) // 2)
         return image.crop((x, y, x+wh, y+wh))
+    def resize_max(image, to):
+        assert min(image.size) == max(image.size), 'not a square'
+        if max(image.size) <= to:
+            return image
+        return image.resize((to, to), resample=Image.BICUBIC)
+    def to_file(image):
+        buff = io.BytesIO()
+        image.save(buff, format='JPEG', subsampling=0, quality=90)
+        return SimpleUploadedFile(
+            'pic.jpg', content=buff.getvalue(), content_type='image/jpeg')
+    def make_small_avatar(name, image):
+        image = resize_max(image, 100)
+        file = to_file(image)
+        name, ext = os.path.splitext(name)
+        default_storage.save('{}_small{}'.format(name, ext), file)
     User = get_user_model()
     user = User.objects.get(pk=user_id)
-    avatar_name = user.st.avatar.name or ''
-    if avatar_name == '_raw_done':
-        return
     user.st.avatar.open()
     image = Image.open(user.st.avatar)
-    image = crop_max_square(image)
-    image.resize((100, 100), resample=Image.BICUBIC)
-    #from django.core.files.uploadedfile import SimpleUploadedFile
-
-    user.st.avatar.name = '_raw_done'
+    square_image = crop_max_square(image)
+    image = resize_max(square_image, 300)
+    file = to_file(image)
+    # delete original even for overwrite storage,
+    # as it may have other extension
+    user.st.avatar.delete()
+    user.st.avatar.save('pic.jpg', file)
     user.st.save()
+    make_small_avatar(user.st.avatar.name, square_image)
 
 
 @delayed_task
