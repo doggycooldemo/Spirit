@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.template import defaultfilters
+from django.core.files.uploadedfile import UploadedFile
 
 from spirit.core import tasks
 from spirit.core.conf import settings
@@ -113,6 +114,6 @@ class UserProfileForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        if 'avatar' in self.changed_data:
+        if isinstance(self.cleaned_data['avatar'], UploadedFile):
             tasks.make_avatars(self.instance.user_id)
         return instance
