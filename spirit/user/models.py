@@ -7,6 +7,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.core.files.storage import default_storage
 
 from spirit.core.conf import settings
 from spirit.core.utils.models import AutoSlugField
@@ -79,3 +80,11 @@ class UserProfile(models.Model):
             .update(
                 last_post_hash=post_hash,
                 last_post_on=timezone.now()))
+
+    def small_avatar_name(self):
+        assert self.avatar
+        name, ext = os.path.splitext(self.avatar.name)
+        return ''.join((name, '_small', ext))
+
+    def small_avatar_url(self):
+        return default_storage.url(self.small_avatar_name())

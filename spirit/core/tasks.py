@@ -112,8 +112,7 @@ def make_avatars(user_id):
     user.st.save()
     small_avatar = avatars.thumbnail(image, 100)
     default_storage.save(
-        avatars.with_suffix(user.st.avatar.name, '_small'),
-        small_avatar)
+        user.st.small_avatar_name(), small_avatar)
 
 
 @delayed_task

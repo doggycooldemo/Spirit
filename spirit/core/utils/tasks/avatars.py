@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import io
-import os
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -36,9 +35,3 @@ def to_file(image):
 def thumbnail(image, to):
     """Return Django file of downscaled image"""
     return to_file(resize_max(image, to))
-
-
-def with_suffix(name, suffix):
-    """Return name + suffix + file extension"""
-    name, ext = os.path.splitext(name)
-    return ''.join((name, suffix, ext))

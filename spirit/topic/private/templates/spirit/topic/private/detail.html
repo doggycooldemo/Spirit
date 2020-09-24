@@ -71,10 +71,7 @@
 
     <div id="reply" class="comments__reply">
       <div class="comments__reply__img">
-        <div
-          class="comment__img__avatar no-pic"
-          style="background-color:{% get_avatar_color user.pk %};"
-        >{{ user.st.nickname.0.upper }}</div>
+        {% include "spirit/comment/_avatar.html" with u=user only %}
       </div>
       <div class="comment__reply__info">
         <a

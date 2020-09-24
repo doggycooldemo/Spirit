@@ -40,10 +40,7 @@
   <div class="comments_list">
     <div class="comments_list__comment">
       <div class="comment__img">
-        <div
-          class="comment__img__avatar no-pic"
-          style="background-color:{% get_avatar_color flag.comment.user_id %};"
-        >{{ flag.comment.user.st.nickname.0.upper }}</div>
+        {% include "spirit/comment/_avatar.html" with u=flag.comment.user only %}
       </div>
       <div class="comment__info">
         <div class="comment__info__username">
@@ -83,10 +80,7 @@
   <div class="comments_list">
     <div class="comments_list__comment no-footer">
       <div class="comment__img">
-        <div
-          class="comment__img__avatar no-pic"
-          style="background-color:{% get_avatar_color f.user_id %};"
-        >{{ f.user.st.nickname.0.upper }}</div>
+        {% include "spirit/comment/_avatar.html" with u=f.user only %}
       </div>
       <div class="comment__info">
         <div class="comment__info__username">

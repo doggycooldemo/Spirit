@@ -46,10 +46,7 @@
     data-pk="{{ c.pk }}"
   >
     <div class="comment__img">
-      <div
-        class="comment__img__avatar no-pic"
-        style="background-color:{% get_avatar_color c.user_id %};"
-      >{{ c.user.st.nickname.0.upper }}</div>
+      {% include "spirit/comment/_avatar.html" with u=c.user only %}
     </div>
     <div class="comment__info">
       {% spaceless %}
